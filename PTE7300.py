@@ -14,7 +14,7 @@ REG_STAT  = 0x32
 
 # Full-scale mapping for pressure (bar). Default: counts in [-16000 .. +16000]
 DEFAULT_FS_MIN_BAR = 0.0   # Change this for your sensor's minimum pressure, in bar
-DEFAULT_FS_MAX_BAR = 200.0 # Change this for your sensor's maximum pressure, in bar
+DEFAULT_FS_MAX_BAR = 40.0 # Change this for your sensor's maximum pressure, in bar
 
 def counts_to_bar(counts: int, fs_min_bar: float = DEFAULT_FS_MIN_BAR, fs_max_bar: float = DEFAULT_FS_MAX_BAR) -> float:
     """
@@ -24,6 +24,10 @@ def counts_to_bar(counts: int, fs_min_bar: float = DEFAULT_FS_MIN_BAR, fs_max_ba
     # Linear map: fs_min -> -16000, fs_max -> +16000
     return fs_min_bar + (counts + 16000) * ((fs_max_bar - fs_min_bar) / 32000.0)
 
+N_PER_BAR = 1500.0 / 3.3
+ZERO_FORCE_OFFSET_N = 0.0
+def bar_to_newtons(pressure_bar: float) -> float:
+    return pressure_bar * N_PER_BAR + ZERO_FORCE_OFFSET_N
 # ===========================================================
 # === END CONFIGURABLE SECTION ==============================
 # ===========================================================
@@ -39,14 +43,6 @@ def crc8(data: bytes) -> int:
                 crc = (crc << 1) & 0xFF
     return crc
 
-# -------------------- Conversion logic --------------------
-def counts_to_bar(counts: int, fs_min_bar: float, fs_max_bar: float) -> float:
-    return fs_min_bar + (counts + 16000) * ((fs_max_bar - fs_min_bar) / 32000.0)
-
-N_PER_BAR = 1500.0 / 3.3
-ZERO_FORCE_OFFSET_N = 0.0
-def bar_to_newtons(pressure_bar: float) -> float:
-    return pressure_bar * N_PER_BAR + ZERO_FORCE_OFFSET_N
 # ----------------------------------------------------------
 
 def read_s16_be_crc(bus: SMBus, addr: int, reg: int) -> int:
