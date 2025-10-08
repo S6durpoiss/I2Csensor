@@ -195,7 +195,7 @@ class PTE7300Gui:
 
 def parse_args():
     ap = argparse.ArgumentParser(description="PTE7300 GUI reader (CRC) → Newtons")
-    ap.add_argument("--bus", type=int, default=1, help="I2C bus number (default 1).")
+    ap.add_argument("--bus", type=int, default=0, help="I2C bus number (default 0).")
     ap.add_argument("--addr", type=lambda x: int(x,0), default=0x6d,
                     help="7-bit I2C address (default 0x6d for CRC).")
     ap.add_argument("--interval", type=int, default=500, help="Update interval in ms (default 500).")
